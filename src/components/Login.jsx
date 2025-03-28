@@ -1,13 +1,25 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import Header from "./Header";
+import { validate } from "../utils/validate";
 
 const Login = () => {
   const [isSignIn, setIsSignIn] = useState(true);
+  const [formErrorMessage, setFormErrorMessage] = useState(null);
   const userLoggedInStatus = isSignIn ? "Sign in" : "Sign up";
+
+  const email = useRef(null);
+  const password = useRef(null);
 
   const handleUserLoggedInStatus = () => {
     setIsSignIn((prev) => !prev);
   };
+
+  const handleSubmit = () => {
+    const message = validate(email.current.value, password.current.value);
+    console.log(message)
+    setFormErrorMessage(message);
+  };
+
   return (
     <div className="absolute w-full h-full bg-black">
       <Header />
@@ -19,7 +31,10 @@ const Login = () => {
         />
       </div>
       {/* Login form */}
-      <form className="absolute w-3/12 bg-black p-12 rounded-md right-0 left-0 my-96 mx-auto text-white z-10 opacity-85">
+      <form
+        onSubmit={(e) => e.preventDefault()}
+        className="absolute w-2/12 bg-black py-12 px-16 rounded-md right-0 left-0 my-96 mx-auto text-white z-10 opacity-85"
+      >
         <h1 className="font-bold text-3xl pb-4 mb-4">{userLoggedInStatus}</h1>
         {!isSignIn && (
           <input
@@ -28,13 +43,23 @@ const Login = () => {
             className="p-4 my-4 w-full bg-gray-800 rounded-sm"
           />
         )}
-        <input type="text" placeholder="Email" className="p-4 my-4 w-full bg-gray-800 rounded-sm" />
         <input
+          ref={email}
+          type="text"
+          placeholder="Email"
+          className="p-4 my-4 w-full bg-gray-800 rounded-sm"
+        />
+        <input
+          ref={password}
           type="password"
           placeholder="Password"
           className="p-4 my-4 w-full bg-gray-800 rounded-sm"
         />
-        <button className="p-4 my-6 bg-red-700 w-full rounded-lg">
+        <p className="p-2 m-2 text-red-600">{formErrorMessage}</p>
+        <button
+          onClick={handleSubmit}
+          className="p-4 my-6 bg-red-700 w-full rounded-lg"
+        >
           {userLoggedInStatus}
         </button>
         <p className="my-3 text-gray-500">
